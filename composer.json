@@ -1,0 +1,16 @@
+{
+    "name": "gakowalski/gk-form-toolkit",
+    "type": "library",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Grzegorz Adam Kowalski",
+            "email": "grzegorz.adam.kowalski@outlook.com"
+        }
+    ],
+    "require": {}
+}
