@@ -5,7 +5,8 @@
     "license": "proprietary",
     "autoload": {
         "psr-4": {
-            "App\\": "app/"
+            "App\\": "app/",
+            "Kowalski\\": "src/"
         }
     },
     "authors": [
@@ -17,6 +18,14 @@
         }
     ],
     "require": {
-      "php": ">=8.0"
+      "php": "^8.0",
+      "mk-j/php_xlsxwriter": "^0.38.0"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Kowalski\\Laravel\\ServiceProvider"
+            ]
+        }
     }
 }

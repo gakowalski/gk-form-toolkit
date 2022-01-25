@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\ExportColumn;
 
 class GenericAppController extends Controller
 {
@@ -108,7 +109,7 @@ class GenericAppController extends Controller
 
           $date = date('Y-m-d H:i:s');
 
-          $columns = \App\ExportColumn::where('group_name', $this->route_prefix())->orderBy('order')->orderBy('id')->get();
+          $columns = ExportColumn::where('group_name', $this->route_prefix())->orderBy('order')->orderBy('id')->get();
 
           $writer = new \XLSXWriter();
           $writer->setTitle("Eksport danych z dnia $date");
