@@ -16,5 +16,7 @@
             "role": "Developer"
         }
     ],
-    "require": {}
+    "require": {
+      "php": ">=8.0"
+    }
 }
