@@ -769,6 +769,7 @@ class Html {
               .then(result => {
                 console.log('Success:', result);
                 document.getElementById('$variable--$field').value = result.url;
+                document.getElementById('$variable--$field').dispatchEvent(new Event('change'));
                 document.getElementById('$variable--$field--link').href = result.url;
                 document.getElementById('$variable--$field--image-preview').src = result.thumbnail.length > 0 ? result.thumbnail : result.preview;
                 document.getElementById('$variable--$field--figure').hidden = false;
