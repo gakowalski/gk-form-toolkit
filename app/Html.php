@@ -156,9 +156,7 @@ class Html {
 
   // general tag generating function
   static function tag($name, $wrap, $inside) {
-    return "<$name $wrap>$ins
-
-    ide</$name>";
+    return "<$name $wrap>$inside</$name>";
   }
 
   static function details($summary, $details, $options) {
