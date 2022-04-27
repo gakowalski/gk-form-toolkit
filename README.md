@@ -91,6 +91,36 @@ Odpowiadają mniej więcej:
 8 <a href="tel:123456789">Zadzwoń do mnie<a>
 ```
 
+#### Tworzennie pól typu select
+
+##### Select wielopoziomowy
+
+```php
+{!! \App\Html::form_group('select_multilevel', 'zwierzeta', 'rodzaj', 'Rodzaj zwierzęcia', [
+  'options' => json_decode(json_encode([
+    [
+      'label' => 'Ssaki',
+      'value' => '2',
+      'children' => [
+        [ 'value' => 'pies', 'label' => 'Pies', 'children' => null ],
+        [ 'value' => 'kot', 'label' => 'Kot', 'children' => null ],
+        [ 'value' => 'kon', 'label' => 'Koń', 'children' => null ],
+      ],
+    ],
+    [
+      'label' => 'Ptaki',
+      'value' => '1',
+      'children' => [
+        [ 'value' => 'slowik', 'label' => 'Słowik', 'children' => null ],
+        [ 'value' => 'golab', 'label' => 'Gołąb', 'children' => null ],
+        [ 'value' => 'wrona', 'label' => 'Wrona', 'children' => null ],
+      ],
+    ],
+  ])),
+]) !!}
+</div>
+```
+
 #### Sterowanie trybami
 
 Działanie klasy `\App\Html` można zmieniać dla wielu generowanych przez nią elementów poprzez zmianę ustawienia trybów. Włączenie trybu realizuje się tak:
