@@ -6,6 +6,8 @@ use Illuminate\Database\Migrations\Migration;
 
 class ExportColumns extends Migration
 {
+    $table = 'export_columns';
+
     /**
      * Run the migrations.
      *
@@ -13,7 +15,10 @@ class ExportColumns extends Migration
      */
     public function up()
     {
-        Schema::create('export_columns', function (Blueprint $table) {
+        if (Schema::hasTable($this->table))
+          return;
+
+        Schema::create($this->table, function (Blueprint $table) {
             $table->bigIncrements('id')->autoIncrement();;
             $table->timestamps();
             $table->string('path');
@@ -30,6 +35,6 @@ class ExportColumns extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('export_columns');
+        Schema::dropIfExists($this->table);
     }
 }
