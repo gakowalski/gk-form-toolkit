@@ -13,13 +13,13 @@ Teoretycznie powinien działać też na PHP 7.4. W przypadku Laravel 7 mogą wys
 
 ### Świeży serwis
 
-```
+```bash
 composer require gakowalski/gk-form-toolkit
 ```
 
 ### Aktualizacja serwisów korzystających z rozproszonych plików zamiast pakietu
 
-```
+```bash
 rm app/Html.php
 rm app/Http/Controllers/GenericAppController.php
 rm app/Http/Requests/ModelBasedFormRequest.php
@@ -41,6 +41,12 @@ Jakkolwiek klasa posiada konstruktor, to tworzenie jej obiektów ma miejsce tylk
 ```
 
 Istotne jest użycie `{!! !!}` zamiast typowego `{{ }}` aby treści znakowe zostały przekazane do widoku bez filtrowania.
+
+Dla czytelności wprowadzono możliwość stosowania dedykowanej dyrektywy Blade: `@html`. Wówczas kod wygląda tak:
+
+```php
+@html(some_static_function('some_arg', $some_arg_2))
+```
 
 #### Tworzenie prostych znaczników
 
@@ -68,14 +74,14 @@ Lista takich znaczników znajduje się w `\App\Html::$_self_closing_tags`.
 #### Tworzenie linków
 
 ```php
-1 {!! \App\Html::link('http://domain.com') !!}
-2 {!! \App\Html::link('http://domain.com', 'Moja domena') !!}
-3 {!! \App\Html::new_tab('http://domain.com') !!}
-4 {!! \App\Html::new_tab('http://domain.com', 'Moja domena') !!}
-5 {!! \App\Html::email('info@domain.com') !!}
-6 {!! \App\Html::email('info@domain.com', 'Napisz do mnie') !!}
-7 {!! \App\Html::phone('123456789') !!}
-8 {!! \App\Html::phone('123456789', 'Zadzwoń!') !!}
+1 @html(link('http://domain.com'))
+2 @html(link('http://domain.com', 'Moja domena'))
+3 @html(new_tab('http://domain.com'))
+4 @html(new_tab('http://domain.com', 'Moja domena'))
+5 @html(email('info@domain.com'))
+6 @html(email('info@domain.com', 'Napisz do mnie'))
+7 @html(phone('123456789'))
+8 @html(phone('123456789', 'Zadzwoń!'))
 ```
 
 Odpowiadają mniej więcej:
@@ -98,13 +104,13 @@ Odpowiadają mniej więcej:
 Grupa w układzie pionowym
 
 ```php
-{!! \App\Html::form_group('select_radio', 'answer', $category_id, null, [
+@html(form_group('select_radio', 'answer', $category_id, null, [
   'options' => [
     0 => 'NIE',
     1 => 'TAK',
     2 => 'NIE WIEM',
   ],
-]) !!}
+]))
 ```
 
 W przypadku Bootstrap, aby uzyskać układ poziomy należy zawrzeć pole w kontenerze i następnie użyć reguł CSS opartych o flex:
@@ -120,16 +126,16 @@ W przypadku Bootstrap, aby uzyskać układ poziomy należy zawrzeć pole w konte
 W przypadku JetStream oraz Tailwind możliwe jest przekazanie odpowiedniego stylu poprzez `options_group_classes`:
 
 ```php
-{!! \App\Html::form_group('select_radio', 'answer', $category_id, null, [
+@html(form_group('select_radio', 'answer', $category_id, null, [
   'options' => [ 0 => 'NIE', 1 => 'TAK', ],
   'options_group_classes' => 'flex',
-]) !!}
+]))
 ```
 
 ##### Select wielopoziomowy
 
 ```php
-{!! \App\Html::form_group('select_multilevel', 'zwierzeta', 'rodzaj', 'Rodzaj zwierzęcia', [
+@html(form_group('select_multilevel', 'zwierzeta', 'rodzaj', 'Rodzaj zwierzęcia', [
   'options' => json_decode(json_encode([
     [
       'label' => 'Ssaki',
@@ -150,7 +156,7 @@ W przypadku JetStream oraz Tailwind możliwe jest przekazanie odpowiedniego styl
       ],
     ],
   ])),
-]) !!}
+]))
 </div>
 ```
 
@@ -159,15 +165,15 @@ W przypadku JetStream oraz Tailwind możliwe jest przekazanie odpowiedniego styl
 Działanie klasy `\App\Html` można zmieniać dla wielu generowanych przez nią elementów poprzez zmianę ustawienia trybów. Włączenie trybu realizuje się tak:
 
 ```php
-{!! \App\Html::set_mode('nazwa_trybu', true) !!}
+@html(set_mode('nazwa_trybu', true))
 ```
 
 Warto dodać, że metoda zwraca zawsze pusty string.
 
-Wyłączenie trybu jest wygląda tak:
+Wyłączenie trybu wygląda tak:
 
 ```php
-{!! \App\Html::set_mode('nazwa_trybu', false) !!}
+@html(set_mode('nazwa_trybu', false))
 ```
 
 Możliwe jest pobranie aktualnego stanu trybu poprzez metodę `get_mode('nazwa_trybu')`. Wynikiem nie jest pusty string lecz wartość `true` lub `false`.
