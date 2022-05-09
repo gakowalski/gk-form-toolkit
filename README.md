@@ -14,7 +14,7 @@ Teoretycznie powinien działać też na PHP 7.4. W przypadku Laravel 7 mogą wys
 ### Świeży serwis
 
 ```
-composer install gakowalski/gk-form-toolkit
+composer require gakowalski/gk-form-toolkit
 ```
 
 ### Aktualizacja serwisów korzystających z rozproszonych plików zamiast pakietu
@@ -23,7 +23,7 @@ composer install gakowalski/gk-form-toolkit
 rm app/Html.php
 rm app/Http/Controllers/GenericAppController.php
 rm app/Http/Requests/ModelBasedFormRequest.php
-composer install gakowalski/gk-form-toolkit
+composer require gakowalski/gk-form-toolkit
 ```
 
 ## Użytkowanie
@@ -91,7 +91,40 @@ Odpowiadają mniej więcej:
 8 <a href="tel:123456789">Zadzwoń do mnie<a>
 ```
 
-#### Tworzennie pól typu select
+#### Tworzennie pól typu select oraz grup radio
+
+##### Grupa radio
+
+Grupa w układzie pionowym
+
+```php
+{!! \App\Html::form_group('select_radio', 'answer', $category_id, null, [
+  'options' => [
+    0 => 'NIE',
+    1 => 'TAK',
+    2 => 'NIE WIEM',
+  ],
+]) !!}
+```
+
+W przypadku Bootstrap, aby uzyskać układ poziomy należy zawrzeć pole w kontenerze i następnie użyć reguł CSS opartych o flex:
+
+```css
+.kontener .form-control {
+  display: flex;
+  gap: 2em;
+  font-size: 1em;
+}
+```
+
+W przypadku JetStream oraz Tailwind możliwe jest przekazanie odpowiedniego stylu poprzez `options_group_classes`:
+
+```php
+{!! \App\Html::form_group('select_radio', 'answer', $category_id, null, [
+  'options' => [ 0 => 'NIE', 1 => 'TAK', ],
+  'options_group_classes' => 'flex',
+]) !!}
+```
 
 ##### Select wielopoziomowy
 
