@@ -156,6 +156,7 @@ W przypadku JetStream oraz Tailwind możliwe jest przekazanie odpowiedniego styl
       ],
     ],
   ])),
+  'options_default_label' => '(Wybierz zwierzę)',
 ]))
 </div>
 ```
@@ -178,6 +179,15 @@ Wyłączenie trybu wygląda tak:
 
 Możliwe jest pobranie aktualnego stanu trybu poprzez metodę `get_mode('nazwa_trybu')`. Wynikiem nie jest pusty string lecz wartość `true` lub `false`.
 
+### Formularze
+
+#### Wiązanie zmiennych
+
+Gdy z różnych przyczyn `form_group` nie może odczytać danych z odpowiedniej tablicy, można dokonać ręcznego powiązania nazwy tablicy ze zmienną.
+
+```
+@html(form_add_var('search', $search))
+```
 
 ### Eksport do XLSX
 

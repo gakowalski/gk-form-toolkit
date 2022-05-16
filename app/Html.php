@@ -396,7 +396,7 @@ class Html {
 /* SELECT MULTILEVEL */
 /* support for three levels */
 } else if ($type == 'select_multilevel') {
-  $opts_html = new Html('option', '--', [ 'value' => '' ]);
+  $opts_html = new Html('option', $options['options_default_label'] ?? '--', [ 'value' => '' ]);
 
   $createOptions = function($options, $variable, $field, $level = 0) use (&$createOptions) {
     $opts_html = '';
