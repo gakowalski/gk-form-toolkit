@@ -48,6 +48,11 @@ Dla czytelności wprowadzono możliwość stosowania dedykowanej dyrektywy Blade
 @html(some_static_function('some_arg', $some_arg_2))
 ```
 
+Migracja na dyrektywę za pomocą search & replace:
+
+* `{!! \App\Html::` na `@html(`
+* ` !!}` oraz `!!}` na `)`
+
 #### Tworzenie prostych znaczników
 
 ```php
