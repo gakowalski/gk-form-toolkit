@@ -21,6 +21,7 @@ composer require gakowalski/gk-form-toolkit
 
 ```bash
 rm app/Html.php
+rm app/Smartcrop.php
 rm app/Http/Controllers/GenericAppController.php
 rm app/Http/Requests/ModelBasedFormRequest.php
 composer require gakowalski/gk-form-toolkit
