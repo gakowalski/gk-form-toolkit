@@ -29,6 +29,17 @@ composer require gakowalski/gk-form-toolkit
 
 ## Użytkowanie
 
+### Obsługa błędów
+
+Aby korzystać z alternatywnej metody raportowania błędów do pliku dziennika, należy w pliku `app\Exceptions\Handler.php` metodę `report()` zmienić na:
+
+```php
+public function report(Throwable $exception)
+{
+  \Kowalski\Laravel\App\Exceptions\Handler::report($exception);
+}
+```
+
 ### Html
 
 #### Wprowadzenie
