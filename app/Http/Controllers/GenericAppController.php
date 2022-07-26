@@ -63,7 +63,7 @@ class GenericAppController extends Controller
       return $this->default_export_name ?? 'default';
     }
 
-    public function standard_view($name, $data) {
+    public function standard_view($name, $data, $other_data = []) {
       $view_prefix = $this->view_prefix();
       return view("$view_prefix.$name", [
         'default_route' => $this->route_prefix(),
@@ -72,7 +72,7 @@ class GenericAppController extends Controller
         'row' => $data,
       ] : [
         'rows' => $data,
-      ]));
+      ]) + $other_data );
     }
 
     public function redirect_to_index() {
