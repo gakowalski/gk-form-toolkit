@@ -27,6 +27,27 @@ class Handler extends ExceptionHandler
     ];
 
     /**
+     * Get the default context variables for logging.
+     *
+     * @return array
+     */
+    protected function context()
+    {
+      if (app()->runningInConsole()){
+        return [
+          'user_agent' => 'CONSOLE',
+        ];
+      } else {
+        return array_merge(parent::context(), [
+          'user_email' => \Auth::user()?->email,
+          'user_agent' => request()->header('user-agent') ?? 'not request?',
+          'route' => request()->route() ?? $_SERVER['REQUEST_URI'] ?? 'not request?',
+          'data' => request()->all(),
+        ]);
+      }
+    }
+
+    /**
      * Report or log an exception.
      *
      * @param  \Throwable  $exception
@@ -36,7 +57,24 @@ class Handler extends ExceptionHandler
      */
     public function report(Throwable $exception)
     {
-      \Kowalski\Laravel\App\Exceptions\Handler::report($exception);
+      $trace = $exception->getTrace();
+
+      if (is_array($trace) && isset($trace[0])) {
+        \Log::error(sprintf(
+            "\n\tUncaught exception '%s'\n\twith message '%s'\n\tin  %s:%d\n\twith context: ",
+            get_class($exception),
+            $exception->getMessage(),
+            $exception->getTrace()[0]['file'] ?? 'unknown file',
+            $exception->getTrace()[0]['line'] ?? 'unknown line'
+        ), $this->context());
+      } else {
+        \Log::error(sprintf(
+            "\n\tUncaught exception '%s'\n\twith message '%s'\n\twith context: ",
+            get_class($exception),
+            $exception->getMessage()
+        ), $this->context());
+      }
+      // parent::report($exception);
     }
 
     /**
