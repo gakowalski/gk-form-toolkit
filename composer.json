@@ -27,5 +27,15 @@
                 "Kowalski\\Laravel\\ServiceProvider"
             ]
         }
+    },
+    "scripts": {
+        "post-install-cmd": [
+            "Illuminate\\Foundation\\ComposerScripts::postInstall",
+            "@php artisan vendor:publish --provider=\"Kowalski\\Laravel\\ServiceProvider\" --tag=\"config\""
+        ],
+        "post-update-cmd": [
+            "Illuminate\\Foundation\\ComposerScripts::postUpdate",
+            "@php artisan vendor:publish --provider=\"Kowalski\\Laravel\\ServiceProvider\" --tag=\"config\" --force"
+        ]
     }
 }

@@ -28,6 +28,12 @@ composer update
 composer require gakowalski/gk-form-toolkit
 ```
 
+### Aktualizacja
+
+```bash
+composer update
+```
+
 ## Development
 
 Zainstaluj w swojej witrynie. Następnie:
@@ -37,12 +43,21 @@ cd vendor/gakowalski/
 rm -fR gk-form-toolkit
 git clone -b dev https://github.com/gakowalski/gk-form-toolkit
 cd gk-form-toolkit/
+git config --global --add safe.directory `pwd`
+git config user.email "grzegorz.adam.kowalski@outlook.com"
+git config user.name "Grzegorz Kowalski"
 ```
 
 Z poziomu hosta z Visual Studio Code należy teraz wykonać:
 
 ```
 code --remote ssh-remote+maps /var/www/html/wiwa.pot.gov.pl/vendor/gakowalski/gk-form-toolkit
+```
+
+Po dokonaniu zmian, w witrynie należy wykonać odtworzenie danych autoloadera:
+
+```bash
+composer dump-autoload
 ```
 
 ## Użytkowanie
@@ -242,12 +257,12 @@ Route::post('upload', function(Request $request) {
     $path = 'attachments/' . time() . '--' . $request->single_file->getClientOriginalName();
     file_put_contents(storage_path('app/public/') . $path, $request->single_file->getContent());
     if (in_array(pathinfo($path, PATHINFO_EXTENSION), $supported_images)) {
-      Smartcrop::thumbnail(storage_path('app/public/') . $path, 300, 300);
-      $thumbnail = Smartcrop::asset("storage/$path", 300, 300);
+      \App\Smartcrop::thumbnail(storage_path('app/public/') . $path, 300, 300);
+      $thumbnail = \App\Smartcrop::asset("storage/$path", 300, 300);
     }
     return json_encode([
       'url' => "storage/$path",
-      'preview' => in_array(pathinfo($path)['extension'], $supported_images) ? "storage/$path" : asset('storage/images/file-icon-pngwing.com.png'),
+      'preview' => in_array(pathinfo($path)['extension'], $supported_images) ? "storage/$path" : asset('vendor/gk-form-toolkit/images/file-icon-pngwing.com.png'),
       'thumbnail' => $thumbnail,
       'title' => $request->single_file->getClientOriginalName(),
     ]);
@@ -268,24 +283,18 @@ Następnie można dodać pole formularza typu `file` ze stosownymi opcjami:
 * gallery_selector - nazwa klasy dla elementów typu `a` zawierających w sobie obraz, aby je wszystkie włączyć do jednej galerii glightbox
 
 ```php
-$html = '';
-$html .= \App\Html::form_group('file', $variable, $field . '--zalacznik--1', null, [
+@html(form_group('file', $default_array, 'path', null, [
   'upload' => [
     'route' => route('upload'),
-    'loader' => asset('storage/images/ajax-loader.gif'),
+    'loader' => asset('vendor/gk-form-toolkit/images/ajax-loader.gif'),
     'use_smartcrop' => true,
-    'default_source' => asset('storage/images/file-icon-pngwing.com.png'),
+    'default_source' => asset('vendor/gk-form-toolkit/images/file-icon-pngwing.com.png'),
     'preview_width' => 150,
     'preview_height' => 150,
-    'gallery_name' => "$variable--$field",
+    'gallery_name' => "$default_array--path",
     'gallery_selector' => 'glightbox',
   ],
-]);
-$html .= new \App\Html('label', "Dodaj załącznik", [
-  'for' => \App\Html::field_id($variable, $field, 'upload-input'),
-  'class' => 'btn',
-]);
-echo $html;
+]))
 ```
 
 ### Eksport do XLSX
