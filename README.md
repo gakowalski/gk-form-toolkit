@@ -207,6 +207,70 @@ Gdy z różnych przyczyn `form_group` nie może odczytać danych z odpowiedniej 
 @html(form_add_var('search', $search))
 ```
 
+#### File upload
+
+Aby upload działał, najpier należy wprowadzić route `upload` do API, która zawiadywać będzie zapisem `single_file` do pliku, sprawdzeniem jego właściwości, utworzeniem miniaturki oraz przede wszystkim zwróci obiekt JSON o właściwościach:
+
+* url - ścieżka dopisywana później do bazowego adresu witryny
+* preview - jeżeli nie ma dostępnej miniaturki, tutaj powinien znaleźć się URL do obrazka zastępującego ją (może być to placeholder, ale może to być też docelowy obraz w pełnym rozmiarze)
+* thumbnail - ścieżka do miniaturki
+* title - nazwa pliku lub po prostu inna nazwa, która wyświetli się przy miniaturce,
+
+```php
+Route::post('upload', function(Request $request) {
+  $supported_images = ['jpeg', 'jpg', 'JPG', 'gif', 'png'];
+  $thumbnail = '';
+
+  if ($request->hasFile('single_file') && $request->file('single_file')->isValid()) {
+    $path = 'attachments/' . time() . '--' . $request->single_file->getClientOriginalName();
+    file_put_contents(storage_path('app/public/') . $path, $request->single_file->getContent());
+    if (in_array(pathinfo($path, PATHINFO_EXTENSION), $supported_images)) {
+      Smartcrop::thumbnail(storage_path('app/public/') . $path, 300, 300);
+      $thumbnail = Smartcrop::asset("storage/$path", 300, 300);
+    }
+    return json_encode([
+      'url' => "storage/$path",
+      'preview' => in_array(pathinfo($path)['extension'], $supported_images) ? "storage/$path" : asset('storage/images/file-icon-pngwing.com.png'),
+      'thumbnail' => $thumbnail,
+      'title' => $request->single_file->getClientOriginalName(),
+    ]);
+  }
+  return 'ERROR';
+})->name('upload');
+```
+
+Następnie można dodać pole formularza typu `file` ze stosownymi opcjami:
+
+* route - nazwa route'u do funkcji upload
+* loader - ścieżka do animowanego obrazu, który wstępnie będzie wyswietlony zanim funkcja upload zwóci link do właściwej miniaturki
+* use_smartcrop - informacja czy użyta ma być biblioteka SmartCrop do wycinania miniatur w taki sposób, aby ujmować najważniejszą cześć oryginalnego obrazu
+* default_source - domyślna ikona do wyświetlenia gdy brak miniatury
+* preview_width - szerokość miniatury
+* preview_height - wysokość miniatury
+* gallery_name - nazwa galerii, używana w przypadku korzystania z biblioteki glightbox jako wartość atrybutu `data-gallery`
+* gallery_selector - nazwa klasy dla elementów typu `a` zawierających w sobie obraz, aby je wszystkie włączyć do jednej galerii glightbox
+
+```php
+$html = '';
+$html .= \App\Html::form_group('file', $variable, $field . '--zalacznik--1', null, [
+  'upload' => [
+    'route' => route('upload'),
+    'loader' => asset('storage/images/ajax-loader.gif'),
+    'use_smartcrop' => true,
+    'default_source' => asset('storage/images/file-icon-pngwing.com.png'),
+    'preview_width' => 150,
+    'preview_height' => 150,
+    'gallery_name' => "$variable--$field",
+    'gallery_selector' => 'glightbox',
+  ],
+]);
+$html .= new \App\Html('label', "Dodaj załącznik", [
+  'for' => \App\Html::field_id($variable, $field, 'upload-input'),
+  'class' => 'btn',
+]);
+echo $html;
+```
+
 ### Eksport do XLSX
 
 ### Szablony klas
