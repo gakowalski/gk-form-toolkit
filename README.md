@@ -28,6 +28,23 @@ composer update
 composer require gakowalski/gk-form-toolkit
 ```
 
+## Development
+
+Zainstaluj w swojej witrynie. Następnie:
+
+```bash
+cd vendor/gakowalski/
+rm -fR gk-form-toolkit
+git clone -b dev https://github.com/gakowalski/gk-form-toolkit
+cd gk-form-toolkit/
+```
+
+Z poziomu hosta z Visual Studio Code należy teraz wykonać:
+
+```
+code --remote ssh-remote+maps /var/www/html/wiwa.pot.gov.pl/vendor/gakowalski/gk-form-toolkit
+```
+
 ## Użytkowanie
 
 ### Obsługa błędów
