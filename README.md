@@ -14,16 +14,17 @@ Teoretycznie powinien działać też na PHP 7.4. W przypadku Laravel 7 mogą wys
 ### Świeży serwis
 
 ```bash
+sudo /usr/local/bin/composer self-update && composer --version
+composer update
 composer require gakowalski/gk-form-toolkit
 ```
 
 ### Aktualizacja serwisów korzystających z rozproszonych plików zamiast pakietu
 
 ```bash
-rm app/Html.php
-rm app/Smartcrop.php
-rm app/Http/Controllers/GenericAppController.php
-rm app/Http/Requests/ModelBasedFormRequest.php
+rm -v app/Html.php app/Smartcrop.php app/Http/Controllers/GenericAppController.php app/Http/Requests/ModelBasedFormRequest.php
+sudo /usr/local/bin/composer self-update && composer --version
+composer update
 composer require gakowalski/gk-form-toolkit
 ```
 
