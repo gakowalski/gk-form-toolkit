@@ -64,12 +64,27 @@ composer dump-autoload
 
 ### Obsługa błędów
 
-Aby korzystać z alternatywnej metody raportowania błędów do pliku dziennika, należy w pliku `app\Exceptions\Handler.php` metodę `report()` zmienić na:
+Aby korzystać z alternatywnej metody raportowania błędów do pliku dziennika, należy w pliku `bootstrap\app.php` nadpisać rejestrację jednego z singletonów dopisując na końcu ich listy:
 
 ```php
-public function report(Throwable $exception)
+$app->singleton(
+    Illuminate\Contracts\Debug\ExceptionHandler::class,
+    Kowalski\Laravel\App\Exceptions\Handler::class
+);
+```
+
+Możliwe jest też zastąpienie pliku `app\Exceptions\Handler.php` poprzez zmianę dziedziczenia klasy, co umożliwia wygodne operowanie wewnętrzną tablicą $dontReport:
+
+```php
+namespace App\Exceptions;
+
+class Handler extends \Kowalski\Laravel\App\Exceptions\Handler
 {
-  \Kowalski\Laravel\App\Exceptions\Handler::report($exception);
+  /*
+  protected $dontReport = [
+    // 
+  ];
+  */
 }
 ```
 

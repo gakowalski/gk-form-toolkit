@@ -13,7 +13,7 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        //
+      \Illuminate\Auth\AuthenticationException::class,
     ];
 
     /**
@@ -59,10 +59,16 @@ class Handler extends ExceptionHandler
     {
       $trace = $exception->getTrace();
 
+      $exception_class = get_class($exception);
+      if (in_array($exception_class, $this->dontReport)) {
+        \Log::error("Ignored due to \$dontReport: $exception_class");
+        return;
+      }
+
       if (is_array($trace) && isset($trace[0])) {
         \Log::error(sprintf(
             "\n\tUncaught exception '%s'\n\twith message '%s'\n\tin  %s:%d\n\twith context: ",
-            get_class($exception),
+            $exception_class,
             $exception->getMessage(),
             $exception->getTrace()[0]['file'] ?? 'unknown file',
             $exception->getTrace()[0]['line'] ?? 'unknown line'
@@ -70,7 +76,7 @@ class Handler extends ExceptionHandler
       } else {
         \Log::error(sprintf(
             "\n\tUncaught exception '%s'\n\twith message '%s'\n\twith context: ",
-            get_class($exception),
+            $exception_class,
             $exception->getMessage()
         ), $this->context());
       }
