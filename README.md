@@ -274,3 +274,10 @@ echo $html;
 ### Eksport do XLSX
 
 ### Szablony klas
+
+```bash
+cd app/Templates/
+cp GenericControllerTemplate.php make Patronat
+```
+
+Generates new PatronatControllerTemplate, PatronatController, Patronat model file, Patronat requests files.
