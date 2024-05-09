@@ -263,8 +263,18 @@ class Html {
     if ($postfix) $postfix = "$separator$postfix";
     return "$variable$field$postfix";
   }
+  /* returns name of field in form
+    $variable - name of array variable in which data was stored or will be stored
+    $field - array index of $variable, can be postfixed with [] to make it an array
+  */
   static function field_name($variable, $field) {
-    return $variable."[$field]";
+    if (str_contains($field, '[]')) {
+      $field = str_replace('[]', '', $field);
+      $postfix = '[]';
+    } else {
+      $postfix = '';
+    }
+    return $variable . "[$field]$postfix";
   }
 
   // callback format: function($type, $variable, $field, $label, $options) { return ''; }
