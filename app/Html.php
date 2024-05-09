@@ -305,6 +305,8 @@ class Html {
     $content = '';
     $input_rules = [];
     $group_rules = [];
+    $field_name = self::field_name($variable, $field);
+    
     if (self::get_mode('placeholders')) $input_rules['placeholder'] = $label;
     if (self::get_mode('required')) $input_rules['required'] = null;
     if (self::get_mode('readonly')) $input_rules['readonly'] = null;
@@ -365,7 +367,7 @@ class Html {
 
       $content .= new Html('select', $opts_html, $input_rules + [
         'class' => self::get_mode('jetstream') ? 'border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm block mt-1 w-full' : 'form-control',
-        'name' => $variable."[$field]",
+        'name' => $field_name,
         'id' => "$variable--$field",
       ]);
 
@@ -381,7 +383,7 @@ class Html {
     $opts_opts = [
       'type' => 'radio',
       'id' => "$variable--$field--$opt_value",
-      'name' => $variable."[$field]",
+      'name' => $field_name,
       'class' => "$variable--$field",
       'value' => $opt_value
     ];
@@ -399,7 +401,7 @@ class Html {
 
   $content .= new Html('div', $opts_html, [
     'class' => self::get_mode('jetstream') ? ($options['options_group_classes'] ?? '') : 'form-control',
-    'name' => $variable."[$field]",
+    'name' => $field_name,
     'id' => "$variable--$field",
   ]);
 
@@ -435,7 +437,7 @@ class Html {
 
   $content .= new Html('select', $opts_html, $input_rules + [
     'class' => 'form-control',
-    'name' => $variable."[$field]",
+    'name' => $field_name,
     'id' => "$variable--$field",
   ]);
 
@@ -445,7 +447,7 @@ class Html {
 
       $content .= new Html('textarea', self::get_var($variable, $field), $input_rules + [
         //'class' => 'form-control',
-        'name' => $variable."[$field]",
+        'name' => $field_name,
         'id' => "$variable--$field",
         'hidden' => 'hidden',
       ]);
@@ -459,7 +461,7 @@ class Html {
         $opts_opts = [
           'type' => 'checkbox',
           'id' => "$variable--$field--$opt_value",
-          //'name' => $variable."[$field]",
+          //'name' => $field_name,
           'class' => "$variable--$field",
           'value' => $opt_value
         ];
@@ -502,7 +504,7 @@ class Html {
     } else if ($type == 'textarea') {
       $content .= new Html('textarea', self::get_var($variable, $field), $input_rules + [
         'class' => self::get_mode('jetstream') ? 'border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm block mt-1 w-full' : 'form-control',
-        'name' => $variable."[$field]",
+        'name' => $field_name,
         'id' => "$variable--$field",
       ]);
 
@@ -514,13 +516,13 @@ class Html {
       $hidden_fix = new Html('input', null, [
         'type' => 'hidden',
         'value' => 0,
-        'name' => $variable."[$field]",
+        'name' => $field_name,
       ]);
       $content = new Html('input', null, $input_rules + [
         'type' => 'checkbox',
         'class' => self::get_mode('jetstream') ? 'rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50' : 'form-check-input',
         'value' => 1,
-        'name' => $variable."[$field]",
+        'name' => $field_name,
         'id' => "$variable--$field",
       ] + $checked) . $content;
       $content = new Html('div', $content, [
@@ -534,7 +536,7 @@ class Html {
     } else if ($type == 'editable_list') {
       $content .= new Html('textarea', self::get_var($variable, $field), $input_rules + [
         //'class' => 'form-control',
-        'name' => $variable."[$field]",
+        'name' => $field_name,
         'id' => "$variable--$field",
         'hidden' => 'hidden',
       ]);
@@ -556,7 +558,7 @@ class Html {
 } else if ($type == 'editable_list_psv') {
       $content .= new Html('textarea', self::get_var($variable, $field), $input_rules + [
         //'class' => 'form-control',
-        'name' => $variable."[$field]",
+        'name' => $field_name,
         'id' => "$variable--$field",
         'hidden' => 'hidden',
       ]);
@@ -576,7 +578,7 @@ class Html {
     } else if ($type == 'editable_key_value') {
       $content .= new Html('textarea', self::get_var($variable, $field), $input_rules + [
         // 'class' => 'form-control',
-        'name' => $variable."[$field]",
+        'name' => $field_name,
         'id' => "$variable--$field",
         'hidden' => 'hidden',
       ]);
@@ -647,7 +649,7 @@ class Html {
       $content .= new Html('input', null, $input_rules + [
         'type' => 'date',
         'class' => 'form-control',
-        'name' => $variable."[$field]",
+        'name' => $field_name,
         'id' => "$variable--$field",
         'value' => \Carbon\Carbon::parse(self::get_var($variable, $field, \Carbon\Carbon::parse('0000-00-00')))->format('Y-m-d'),
       ]);
@@ -658,7 +660,7 @@ class Html {
       $content .= new Html('input', null, $input_rules + [
         'type' => 'url',
         'class' => self::get_mode('jetstream') ? 'border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm block mt-1 w-full' : 'form-control',
-        'name' => $variable."[$field]",
+        'name' => $field_name,
         'id' => "$variable--$field",
         'value' => self::get_var($variable, $field),
         'onblur' => "if (this.value && !~this.value.indexOf('http')) this.value = 'https://' + this.value",
@@ -742,7 +744,7 @@ class Html {
       $content .= new Html('input', null, [
         'type' => 'hidden',
         'id' => "$variable--$field",
-        'name' => $variable."[$field]",
+        'name' => $field_name,
         'value' => self::get_var($variable, $field),
       ]);
       if (false === empty(self::get_var($variable, $field)) && array_key_exists('required', $input_rules)) {
@@ -818,7 +820,7 @@ class Html {
         'type' => $type,
         'class' =>
           self::get_mode('jetstream') ? 'border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm block mt-1 w-full' : 'form-control',
-        'name' => $variable."[$field]",
+        'name' => $field_name,
         'id' => "$variable--$field",
         'value' => self::get_var($variable, $field),
       ]);
