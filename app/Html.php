@@ -446,10 +446,10 @@ class Html {
 } else if ($type == 'select_multiple') {
 
       $content .= new Html('textarea', self::get_var($variable, $field), $input_rules + [
-        //'class' => 'form-control',
         'name' => $field_name,
         'id' => "$variable--$field",
         'hidden' => 'hidden',
+        'onchange' => "window.tmp = this.value; Array.prototype.slice.call(this.closest('.app_html_select_multiple').querySelectorAll('input[type=checkbox]')).forEach(function(v) { v.checked = window.tmp.split('|').includes(v.value); })",
       ]);
 
       $opts = $options['options'] ?? [];
@@ -461,17 +461,17 @@ class Html {
         $opts_opts = [
           'type' => 'checkbox',
           'id' => "$variable--$field--$opt_value",
-          //'name' => $field_name,
           'class' => "$variable--$field",
           'value' => $opt_value
         ];
         if (array_key_exists('readonly', $input_rules)) {
           $input_rules['onclick'] = 'return false;';
         }
-        //$checkboxes .= "<label style='display:block' class='$class'><input type='checkbox' id='$variable--$field--$opt_value' class='$variable--$field' value='$opt_value'> $opt_label</label>\n";
+
         $checkboxes .= new HTML('label', (new Html('input', null, $input_rules + $opts_opts))." $opt_label", [
           'style' => 'display:block',
           'class' => $class,
+          'onchange' => "this.closest('.app_html_select_multiple').querySelector('textarea').value = Array.prototype.slice.call(this.closest('.app_html_select_multiple').querySelectorAll('input:checked')).reduce(function(acc, cur) { acc.push(cur.value); return acc; }, []).join('|')",
         ]);
       }
 
@@ -479,25 +479,6 @@ class Html {
         'class' => self::get_mode('jetstream') ? ($options['options_group_classes'] ?? '') : 'form-control',
         'style' => 'height:initial',  //< fix for bootstrap strange height calculation
       ]);
-
-      $content .= new Html('script', "
-        if (true) {
-          let initial_values = document.getElementById('$variable--$field').value.split('|');
-          for (i = 0; i < initial_values.length; ++i) {
-            let e = document.getElementById('$variable--$field--' + initial_values[i]);
-            if (e) e.checked = 'checked'
-          }
-
-          let elements = document.getElementsByClassName('$variable--$field');
-          for (i = 0; i < elements.length; ++i) {
-            elements[i].addEventListener('change', function() {
-              let values = Array.prototype.slice.call(document.querySelectorAll('input:checked.$variable--$field')).reduce(function(acc, cur) { acc.push(cur.value); return acc; }, []);
-              values = values.join('|');
-              document.getElementById('$variable--$field').value = values;
-            }, false);
-          }
-        }
-      ");
 
 /* TEXT AREA */
 
@@ -557,22 +538,19 @@ class Html {
 
 } else if ($type == 'editable_list_psv') {
       $content .= new Html('textarea', self::get_var($variable, $field), $input_rules + [
-        //'class' => 'form-control',
         'name' => $field_name,
         'id' => "$variable--$field",
         'hidden' => 'hidden',
+        'onchange' => "this.closest('.app_html_editable_list_psv').querySelector('ul').innerHTML = '<li>' + this.value.replace(/\\|/g, '</li><li>') + '</li>';",
       ]);
       $content .= new Html('ul', '<li>' . strtr(self::get_var($variable, $field, ''), ['|' => '</li><li>']) . '</li>', $input_rules + [
         'id' => "$variable--$field--list",
         'contenteditable' => 'true',
         'class' => 'form-control pl-5',
         'style' => 'height:initial',  //< fix for bootstrap strange height calculation
+        'oninput' => "this.closest('.app_html_editable_list_psv').querySelector('textarea').value = this.innerHTML.replace(/<\/li>\s*<li>/g, '|').replace(/<li>|<\/li>/g, '');",
       ]);
-      $content .= new Html('script', "
-          document.getElementById('$variable--$field--list').addEventListener('input', function() {
-            document.getElementById('$variable--$field').value = document.getElementById('$variable--$field--list').innerHTML.replace(/<\/li>\s*<li>/g, '|').replace(/<li>|<\/li>/g, '');
-          }, false);
-      ");
+      $content .= new Html('script', "document.getElementById('$variable--$field').dispatchEvent(new Event('change')); }, false);");
 
 /* EDITABLE KEY-VALUE (stored as JSON) */
     } else if ($type == 'editable_key_value') {
