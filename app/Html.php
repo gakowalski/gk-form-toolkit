@@ -91,6 +91,8 @@ class Html {
 
    static public $append_fields_callback = null;
 
+   static public $append_initial_scripts = true;
+
    static public $_mode = [
      'labels' => true,            //< show labels
      'labels_inline' => false,    //< labels on left of input instead of above
@@ -284,6 +286,30 @@ class Html {
     return '<!-- append_func set -->';
   }
 
+  static function get_initial_scripts() {
+    $ob_html_content = '';
+
+    ob_start();
+    ?>
+    <script>
+      var debounce_timeout = null;
+
+      function debounce(wait, func) {
+        return function(...args) {
+          clearTimeout(debounce_timeout);
+          debounce_timeout = setTimeout(() => {
+            func.apply(this, args);
+          }, wait);
+        };
+      }
+    </script>
+    <?php
+
+    $ob_html_content .= ob_get_clean();
+
+    return $ob_html_content;
+  }
+
   // BOOTSTRAP FORMS
   /*
     $type - type of HTML5 input field (text, select etc.)
@@ -307,6 +333,10 @@ class Html {
     $group_rules = [];
     $field_name = self::field_name($variable, $field);
     
+    if (self::$append_initial_scripts) {
+      $content .= self::get_initial_scripts();
+      self::$append_initial_scripts = false;
+    }
     if (self::get_mode('placeholders')) $input_rules['placeholder'] = $label;
     if (self::get_mode('required')) $input_rules['required'] = null;
     if (self::get_mode('readonly')) $input_rules['readonly'] = null;
@@ -471,7 +501,7 @@ class Html {
         $checkboxes .= new HTML('label', (new Html('input', null, $input_rules + $opts_opts))." $opt_label", [
           'style' => 'display:block',
           'class' => $class,
-          'onchange' => "this.closest('.app_html_select_multiple').querySelector('textarea').value = Array.prototype.slice.call(this.closest('.app_html_select_multiple').querySelectorAll('input:checked')).reduce(function(acc, cur) { acc.push(cur.value); return acc; }, []).join('|')",
+          'onchange' => "this.closest('.app_html_select_multiple').querySelector('textarea').value = Array.prototype.slice.call(this.closest('.app_html_select_multiple').querySelectorAll('input:checked')).reduce(function(acc, cur) { acc.push(cur.value); return acc; }, []).join('|'); this.closest('.app_html_select_multiple').querySelector('textarea').dispatchEvent(new Event('change'));",
         ]);
       }
 
@@ -483,10 +513,12 @@ class Html {
 /* TEXT AREA */
 
     } else if ($type == 'textarea') {
+
       $content .= new Html('textarea', self::get_var($variable, $field), $input_rules + [
         'class' => self::get_mode('jetstream') ? 'border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm block mt-1 w-full' : 'form-control',
         'name' => $field_name,
         'id' => "$variable--$field",
+        //'raw-data' => serialize(self::get_var($variable, $field))
       ]);
 
 /* CHECKBOX */
@@ -549,8 +581,11 @@ class Html {
         'class' => 'form-control pl-5',
         'style' => 'height:initial',  //< fix for bootstrap strange height calculation
         'oninput' => "this.closest('.app_html_editable_list_psv').querySelector('textarea').value = this.innerHTML.replace(/<\/li>\s*<li>/g, '|').replace(/<li>|<\/li>/g, '');",
+        'onkeyup' => "debounce(2000, function(element) { element.closest('.app_html_editable_list_psv').querySelector('textarea').dispatchEvent(new Event('change')); })(this);",
       ]);
-      $content .= new Html('script', "document.getElementById('$variable--$field').dispatchEvent(new Event('change')); }, false);");
+      if (self::get_var($variable, $field)) {
+        $content .= new Html('script', "document.getElementById('$variable--$field').dispatchEvent(new Event('change'));");
+      }
 
 /* EDITABLE KEY-VALUE (stored as JSON) */
     } else if ($type == 'editable_key_value') {
